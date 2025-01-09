@@ -3,14 +3,16 @@ use std::path::Path;
 use std::sync::Arc;
 use solana_program::native_token::lamports_to_sol;
 use crate::env::errors::EnvErrors;
+use env_logger::{Builder, Env as EnvBuilder};
+use log::{LevelFilter};
 
 pub struct Env {
-    websocket_endpoint: Arc<String>,
-    rpc_endpoint: Arc<String>,
-    private_key: Arc<String>,
-
-    swap_amount: Arc<u64>,
-    swap_priority_fee: Arc<u64>,
+    pub loglevel: Arc<LevelFilter>,
+    pub websocket_endpoint: Arc<String>,
+    pub rpc_endpoint: Arc<String>,
+    pub private_key: Arc<String>,
+    pub swap_amount: Arc<u64>,
+    pub swap_priority_fee: Arc<u64>,
 }
 
 impl Env {
@@ -23,15 +25,18 @@ impl Env {
         }
         dotenv::from_path(".env").ok();
 
+        let loglevel = Arc::new(parse_log_level(env::var("LOG_LEVEL")?));
+
         let websocket_endpoint = Arc::new(env::var("WEBSOCKET_ENDPOINT")?);
         let rpc_endpoint = Arc::new(env::var("RPC_ENDPOINT")?);
-        let private_key = Arc::new(env::var("PRIVATE_KEYPAIR")?);
 
+        let private_key = Arc::new(env::var("PRIVATE_KEYPAIR")?);
         let swap_amount = Arc::new(env::var("SWAP_AMOUNT")?.parse::<u64>().unwrap());
         let swap_priority_fee = Arc::new(env::var("SWAP_PRIORITY_FEE")?.parse::<u64>().unwrap());
 
         Ok(
             Self {
+                loglevel,
                 websocket_endpoint,
                 rpc_endpoint,
                 private_key,
@@ -39,6 +44,16 @@ impl Env {
                 swap_priority_fee,
             }
         )
+    }
+
+    pub fn setup_logger(&self) {
+        let env = EnvBuilder::default();
+
+        Builder::from_env(env)
+            .filter_level(*self.loglevel)
+            .format_level(false)
+            .format_timestamp_millis()
+            .init();
     }
 }
 
@@ -81,4 +96,17 @@ fn create_env() -> std::io::Result<()> {
     }
 
     Ok(())
+}
+
+
+fn parse_log_level(log_level: String) -> LevelFilter {
+    match log_level.to_lowercase().as_str() {
+        "off" => LevelFilter::Off,
+        "error" => LevelFilter::Error,
+        "warn" => LevelFilter::Warn,
+        "info" => LevelFilter::Info,
+        "debug" => LevelFilter::Debug,
+        "trace" => LevelFilter::Trace,
+        _ => LevelFilter::Info // defaults to info, if wrong loglevel given
+    }
 }
