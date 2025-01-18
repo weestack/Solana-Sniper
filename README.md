@@ -10,7 +10,7 @@ This repository provides the base code, starting from the basics of setting up t
 
 - [x] [Project structure and env setup](https://medium.com/@weestack/writing-a-raydium-sniper-in-rust-f892ce90ca69)
 - [x] [Listening to token creations with websockets](https://medium.com/@weestack/building-a-lightning-fast-solana-sniper-bot-ec11dc5f2bff)
-- [ ] extracting the necessary addresses
+- [x] Working with initialize2 transactions, to extracting data for swapping
 - [ ] Creating a Solana Command cli tool to wrap sol, and close empty accounts
 - [ ] Increase stability, with enhanced error handling
 - [ ] Raydium Swap instruction

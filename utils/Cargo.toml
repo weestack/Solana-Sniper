@@ -14,9 +14,13 @@ publish.workspace = true
 [dependencies]
 dotenv = { workspace = true }
 thiserror = { workspace = true }
+solana-transaction-status = { workspace = true}
+solana-client = { workspace = true }
 solana-program = { workspace = true }
+solana-sdk = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
+tokio = "1.43.0"
 
 [lints]
 workspace = true
