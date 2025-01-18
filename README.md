@@ -3,7 +3,6 @@
  | ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/weestack/Solana-Sniper/rust.yml) |
 
 # Solana Sniper - A Fast and Optimized Sniping Bot in Rust
-![build](https://github.com/github/docs/actions/workflows/main.yml/badge.svg?branch=main)
 
 ## Introduction
 Welcome to the **Solana Sniper** repository! This project is part of a series of articles that guide you through building a high-performance sniper bot on the Solana blockchain using **Rust**. The goal of this sniper is to consistently place you among the top snipes for any new AMM token on **Raydium**, allowing you to capture profits from newly launched tokens.
