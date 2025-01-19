@@ -15,7 +15,7 @@ async fn main() {
     let subscriber = oracle::websocket::SolanaSubscriber::new(
         env.websocket_endpoint,
         env.rpc_endpoint,
-        CommitmentConfig::processed(),
+        CommitmentConfig::confirmed(),
         subscribe_to_raydium
     ).await;
 

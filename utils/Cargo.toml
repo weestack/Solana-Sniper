@@ -20,7 +20,7 @@ solana-program = { workspace = true }
 solana-sdk = { workspace = true }
 env_logger = { workspace = true }
 log = { workspace = true }
-tokio = "1.43.0"
+tokio = { workspace = true }
 
 [lints]
 workspace = true

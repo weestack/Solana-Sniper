@@ -2,6 +2,7 @@ use solana_sdk::pubkey;
 use solana_sdk::pubkey::Pubkey;
 use solana_sdk::transaction::VersionedTransaction;
 use std::fmt;
+use log::info;
 use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_client::rpc_config::RpcTransactionConfig;
 use solana_sdk::commitment_config::CommitmentConfig;
@@ -76,6 +77,7 @@ impl RaydiumInitialize2Transaction {
         /* eval token addresses */
         let base_coin;
         let token_coin;
+
         if keys[13].to_string() == "So11111111111111111111111111111111111111112" {
             base_coin = pubkey!("So11111111111111111111111111111111111111112");
             token_coin = keys[18];
@@ -120,8 +122,7 @@ impl fmt::Display for RaydiumInitialize2Transaction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,
-            "
-token_program:                {}
+            "token_program:                {}
 spl_associated_token_account: {}
 system_program:               {}
 rent_program:                 {}
@@ -141,8 +142,7 @@ serum_market:                 {}
 user_wallet:                  {}
 user_token_coin:              {}
 user_token_pc:                {}
-user_lp_token_account:        {}
-        ",
+user_lp_token_account:        {}",
             self.token_program,
             self.spl_associated_token_account,
             self.system_program,

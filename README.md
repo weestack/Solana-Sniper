@@ -1,6 +1,6 @@
 | Build |
 | :---: | 
- | ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/weestack/Solana-Sniper/rust.yml) |
+| ![Build](https://img.shields.io/github/actions/workflow/status/weestack/Solana-Sniper/rust.yml) |
 
 # Solana Sniper - A Fast and Optimized Sniping Bot in Rust
 

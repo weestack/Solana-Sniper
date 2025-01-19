@@ -7,7 +7,6 @@ edition = "2021"
 utils = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true}
-solana-transaction-status = { workspace = true}
 tokio = { workspace = true }
 futures = { workspace = true }
 log = { workspace = true }

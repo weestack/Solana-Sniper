@@ -60,11 +60,11 @@ impl SolanaSubscriber {
                     let transaction = RaydiumInitialize2Transaction::get_transaction(tx, rpc_endpoint.clone()).await;
 
                     if transaction.is_err() {
-                        info!("Failed to parse transaction");
+                        info!("Failed to get transaction");
+                    } else {
+                        let initialize2_transaction = transaction.unwrap();
+                        info!("====={}=====\r\n{}", initialize2_transaction.get_mint(), initialize2_transaction);
                     }
-
-                    let initialize2_transaction = transaction.unwrap();
-                    println!("====={}=====\r\n{}", initialize2_transaction.get_mint(), initialize2_transaction);
                 }
             }
         }
