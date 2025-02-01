@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "shell",
     "sniper"
 ]
 
@@ -29,6 +30,7 @@ tokio = { version = "1.42.0"}
 futures = "0.3.31"
 env_logger = "0.11.6"
 log = "0.4.22"
+clap = { version = "4.5.27", features = ["derive"] }
 serde_json = "1.0.135"
 
 [workspace.lints.clippy]
