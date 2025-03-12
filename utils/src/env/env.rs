@@ -5,12 +5,14 @@ use solana_program::native_token::lamports_to_sol;
 use crate::env::errors::EnvErrors;
 use env_logger::{Builder, Env as EnvBuilder};
 use log::{LevelFilter};
+use solana_sdk::signature::Keypair;
+use solana_sdk::signer::EncodableKey;
 
 pub struct Env {
     pub loglevel: Arc<LevelFilter>,
     pub websocket_endpoint: Arc<String>,
     pub rpc_endpoint: Arc<String>,
-    pub private_key: Arc<String>,
+    pub private_key: Arc<Keypair>,
     pub swap_amount: Arc<u64>,
     pub swap_priority_fee: Arc<u64>,
 }
@@ -30,7 +32,9 @@ impl Env {
         let websocket_endpoint = Arc::new(env::var("WEBSOCKET_ENDPOINT")?);
         let rpc_endpoint = Arc::new(env::var("RPC_ENDPOINT")?);
 
-        let private_key = Arc::new(env::var("PRIVATE_KEYPAIR")?);
+        let private_key_path = env::var("PRIVATE_KEYPAIR")?;
+        let private_key= Arc::new(Keypair::read_from_file(private_key_path).unwrap());
+
         let swap_amount = Arc::new(env::var("SWAP_AMOUNT")?.parse::<u64>().unwrap());
         let swap_priority_fee = Arc::new(env::var("SWAP_PRIORITY_FEE")?.parse::<u64>().unwrap());
 

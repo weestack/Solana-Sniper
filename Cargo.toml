@@ -26,12 +26,13 @@ solana-client = "2.0.21"
 solana-program = "2.0.21"
 solana-sdk = "2.0.21"
 solana-transaction-status = "2.0.21"
+spl-token-client = "0.14.0"
 tokio = { version = "1.42.0"}
 futures = "0.3.31"
 env_logger = "0.11.6"
 log = "0.4.22"
-clap = { version = "4.5.27", features = ["derive"] }
-serde_json = "1.0.135"
+clap = { version = "4.5.24", features = ["derive"] }
+spl-token = "7.0.0"
 
 [workspace.lints.clippy]
 clone_on_ref_ptr = "deny"

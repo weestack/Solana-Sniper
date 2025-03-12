@@ -12,8 +12,13 @@ categories.workspace = true
 publish.workspace = true
 
 [dependencies]
-clap = { version = "4.5.24", features = ["derive"] }
+clap = { workspace = true }
 utils = { workspace = true }
+solana-client = { workspace = true }
+solana-sdk = { workspace = true }
+spl-token-client = { workspace = true }
+spl-token = { workspace = true }
+tokio = { workspace = true }
 
 [lints]
 workspace = true
