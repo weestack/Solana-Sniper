@@ -1,6 +1,4 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
-use std::sync::Arc;
-use tokio::time::{Instant};
 
 #[derive(Debug)]
 pub struct MocketSwapTask {
@@ -94,6 +92,8 @@ impl RingBuffer {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::Arc;
+    use tokio::time::{Instant};
     use tokio::task::JoinHandle;
 
     #[tokio::test]
