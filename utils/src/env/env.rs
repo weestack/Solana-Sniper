@@ -25,7 +25,19 @@ impl Env {
             println!("Could not find .env, would you like to use .env.dist as a template instead? (y/n)");
             create_env().expect("Failed creating .env file");
         }
+
+        if ! path.exists() {
+            return Err(EnvErrors::MissingEnvFile);
+        }
+
         dotenv::from_path(".env").ok();
+
+        let required_env_vars = vec!["WEBSOCKET_ENDPOINT", "RPC_ENDPOINT", "PRIVATE_KEYPAIR", "SWAP_AMOUNT", "SWAP_PRIORITY_FEE"];
+        for var in required_env_vars {
+            if env::var(var).is_err() {
+                return Err(EnvErrors::EnvVarNotFound(var.to_string(), env::VarError::NotPresent));
+            }
+        }
 
         let loglevel = Arc::new(parse_log_level(env::var("LOG_LEVEL")?));
 
@@ -33,6 +45,12 @@ impl Env {
         let rpc_endpoint = Arc::new(env::var("RPC_ENDPOINT")?);
 
         let private_key_path = env::var("PRIVATE_KEYPAIR")?;
+
+        match Keypair::read_from_file(private_key_path.clone()) {
+            Ok(_) => (),
+            Err(_) => return Err(EnvErrors::CouldNotFindPrivateKey(private_key_path))
+        }
+
         let private_key= Arc::new(Keypair::read_from_file(private_key_path).unwrap());
 
         let swap_amount = Arc::new(env::var("SWAP_AMOUNT")?.parse::<u64>().unwrap());

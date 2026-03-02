@@ -11,4 +11,7 @@ pub enum EnvErrors {
 
     #[error("Invalid ENV {0} file")]
     InvalidEnv(#[from] VarError),
+
+    #[error("No private key found loaded at path file://{0} file make sure to point it to a valid private key")]
+    CouldNotFindPrivateKey(String),
 }
