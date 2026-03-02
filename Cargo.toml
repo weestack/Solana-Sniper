@@ -33,8 +33,8 @@ solana-transaction = "4.0.0"
 solana-transaction-status = "4.0.0-alpha.0"
 solana-system-interface = "3.1.0"
 env_logger = "0.11.9"
-spl-associated-token-account = "8.0.0"
-spl-token = "9.0.0"
+spl-associated-token-account = { version = "8.0.0", default-features = false }
+spl-token = { version = "9.0.0", features = ["no-entrypoint"] }
 
 [workspace.lints.clippy]
 clone_on_ref_ptr = "deny"
