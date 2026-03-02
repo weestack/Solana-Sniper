@@ -15,6 +15,7 @@ publish.workspace = true
 dotenv = { workspace = true }
 thiserror = { workspace = true }
 solana-transaction-status = { workspace = true}
+solana-transaction = { workspace = true}
 solana-client = { workspace = true }
 solana-program = { workspace = true }
 solana-sdk = { workspace = true }

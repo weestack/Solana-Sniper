@@ -1,13 +1,10 @@
 use solana_sdk::pubkey;
 use solana_sdk::pubkey::Pubkey;
-use solana_sdk::transaction::VersionedTransaction;
 use std::fmt;
-use log::info;
 use solana_client::nonblocking::rpc_client::RpcClient;
-use solana_client::rpc_config::RpcTransactionConfig;
-use solana_sdk::commitment_config::CommitmentConfig;
+use solana_client::rpc_config::{CommitmentConfig, RpcTransactionConfig, UiTransactionEncoding};
+use solana_client::rpc_response::transaction::versioned::VersionedTransaction;
 use solana_sdk::signature::Signature;
-use solana_transaction_status::UiTransactionEncoding;
 
 pub struct RaydiumInitialize2Transaction {
     token_program: Pubkey,

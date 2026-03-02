@@ -16,7 +16,9 @@ clap = { workspace = true }
 utils = { workspace = true }
 solana-client = { workspace = true }
 solana-sdk = { workspace = true }
-spl-token-client = { workspace = true }
+solana-transaction = { workspace = true }
+solana-system-interface = { workspace = true }
+spl-associated-token-account = { workspace = true }
 spl-token = { workspace = true }
 tokio = { workspace = true }
 

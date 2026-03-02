@@ -1,6 +1,12 @@
 pub mod env;
 pub mod raydium;
 
+
+pub fn lamports_to_sol(lamports: u64) -> f64 {
+    let converted_lamports = lamports as f64;
+    converted_lamports / 1_000_000_000f64
+}
+
 #[cfg(test)]
 mod tests {
     use std::str::FromStr;

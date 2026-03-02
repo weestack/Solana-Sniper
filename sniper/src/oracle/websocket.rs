@@ -4,9 +4,10 @@ use solana_client::{
     nonblocking::pubsub_client::PubsubClient,
     rpc_config::{RpcTransactionLogsConfig, RpcTransactionLogsFilter},
 };
-use solana_sdk::commitment_config::{CommitmentConfig};
+
 use futures::StreamExt;
-use log::info;
+use log::{error, info};
+use solana_client::rpc_config::CommitmentConfig;
 use solana_sdk::signature::Signature;
 use utils::raydium::initialize2::RaydiumInitialize2Transaction;
 
@@ -60,7 +61,7 @@ impl SolanaSubscriber {
                     let transaction = RaydiumInitialize2Transaction::get_transaction(tx, rpc_endpoint.clone()).await;
 
                     if transaction.is_err() {
-                        info!("Failed to get transaction");
+                        error!("Failed to get transaction");
                     } else {
                         let initialize2_transaction = transaction.unwrap();
                         info!("====={}=====\r\n{}", initialize2_transaction.get_mint(), initialize2_transaction);

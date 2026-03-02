@@ -1,6 +1,6 @@
 mod oracle;
 
-use solana_sdk::commitment_config::CommitmentConfig;
+use solana_client::rpc_config::CommitmentConfig;
 use utils::env::env::Env;
 
 #[tokio::main]

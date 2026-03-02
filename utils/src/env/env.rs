@@ -1,12 +1,12 @@
 use std::{env, fmt, fs, io};
 use std::path::Path;
 use std::sync::Arc;
-use solana_program::native_token::lamports_to_sol;
 use crate::env::errors::EnvErrors;
 use env_logger::{Builder, Env as EnvBuilder};
 use log::{LevelFilter};
 use solana_sdk::signature::Keypair;
 use solana_sdk::signer::EncodableKey;
+use crate::lamports_to_sol;
 
 pub struct Env {
     pub loglevel: Arc<LevelFilter>,
