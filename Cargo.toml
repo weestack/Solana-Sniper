@@ -19,8 +19,12 @@ categories = ["science", "algorithms"]
 publish = false
 
 [workspace.dependencies]
+tokio = { version = "1.49.0"}
+futures = "0.3.32"
 utils = { path = "utils" }
 dotenv = "0.15.0"
+log = "0.4.29"
+clap = { version = "4.5.60", features = ["derive"] }
 thiserror = "2.0.18"
 solana-client = "4.0.0-alpha.0"
 solana-program = "4.0.0"
@@ -28,12 +32,8 @@ solana-sdk = "4.0.1"
 solana-transaction = "4.0.0"
 solana-transaction-status = "4.0.0-alpha.0"
 solana-system-interface = "3.1.0"
-spl-associated-token-account = "8.0.0"
-tokio = { version = "1.49.0"}
-futures = "0.3.32"
 env_logger = "0.11.9"
-log = "0.4.29"
-clap = { version = "4.5.60", features = ["derive"] }
+spl-associated-token-account = "8.0.0"
 spl-token = "9.0.0"
 
 [workspace.lints.clippy]
