@@ -10,6 +10,7 @@ use log::{error, info};
 use solana_client::rpc_config::CommitmentConfig;
 use solana_sdk::signature::Signature;
 use utils::raydium::initialize2::RaydiumInitialize2Transaction;
+use utils::ring_buffer::ring_buffer::RingBuffer;
 
 pub struct SolanaSubscriber {
     client: PubsubClient,
@@ -33,7 +34,7 @@ impl SolanaSubscriber {
         }
     }
 
-    pub async fn start_thread(&self) {
+    pub async fn start_thread(&self, ring_buffer: Arc<RingBuffer>) {
         info!("Starting Solana websocket subscriber");
         let subscribe_to = self.subscribe_to.clone();
         let config_level = self.config_level.clone();
@@ -59,7 +60,9 @@ impl SolanaSubscriber {
                     let tx = Signature::from_str(response.value.signature.as_str()).unwrap();
                     info!("Received tx https://solscan.io/tx/{}", tx);
                     let transaction = RaydiumInitialize2Transaction::get_transaction(tx, rpc_endpoint.clone()).await;
-
+                    ring_buffer.enqueue(
+                        initialize2_transaction
+                    );
                     if transaction.is_err() {
                         error!("Failed to get transaction");
                     } else {

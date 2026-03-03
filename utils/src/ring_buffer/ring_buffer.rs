@@ -6,7 +6,7 @@ pub struct MocketSwapTask {
     pub dex: String,
 }
 
-struct Slot {
+pub struct Slot {
     sequence: AtomicUsize,
     data: std::cell::UnsafeCell<Option<MocketSwapTask>>,
 }
@@ -15,7 +15,7 @@ unsafe impl Send for Slot {}
 unsafe impl Sync for Slot {}
 
 pub struct RingBuffer {
-    buffer: Vec<Slot>,
+    pub buffer: Vec<Slot>,
     mask: usize,
     enqueue_pos: AtomicUsize,
     dequeue_pos: AtomicUsize,
