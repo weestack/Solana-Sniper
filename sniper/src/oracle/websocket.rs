@@ -9,7 +9,8 @@ use futures::StreamExt;
 use log::{error, info};
 use solana_client::rpc_config::CommitmentConfig;
 use solana_sdk::signature::Signature;
-use utils::raydium::initialize2::RaydiumInitialize2Transaction;
+use utils::dex::dex::{MintTransaction, MintedTokenTransaction};
+use utils::raydium::mint::RaydiumMintedTransaction;
 use utils::ring_buffer::ring_buffer::RingBuffer;
 
 pub struct SolanaSubscriber {
@@ -34,7 +35,7 @@ impl SolanaSubscriber {
         }
     }
 
-    pub async fn start_thread(&self, ring_buffer: Arc<RingBuffer>) {
+    pub async fn start_thread(&self, ring_buffer: Arc<RingBuffer<MintTransaction>>) {
         info!("Starting Solana websocket subscriber");
         let subscribe_to = self.subscribe_to.clone();
         let config_level = self.config_level.clone();
@@ -59,15 +60,21 @@ impl SolanaSubscriber {
                 {
                     let tx = Signature::from_str(response.value.signature.as_str()).unwrap();
                     info!("Received tx https://solscan.io/tx/{}", tx);
-                    let transaction = RaydiumInitialize2Transaction::get_transaction(tx, rpc_endpoint.clone()).await;
-                    ring_buffer.enqueue(
-                        initialize2_transaction
-                    );
+                    let transaction = RaydiumMintedTransaction::get_transaction(tx, rpc_endpoint.clone()).await;
+                    
                     if transaction.is_err() {
                         error!("Failed to get transaction");
                     } else {
                         let initialize2_transaction = transaction.unwrap();
-                        info!("====={}=====\r\n{}", initialize2_transaction.get_mint(), initialize2_transaction);
+                        let state = ring_buffer.enqueue(
+                            initialize2_transaction.clone()
+                        );
+                        
+                        if state.is_err() {
+                            error!("Failed to enqueue transaction");
+                        } else {
+                            info!("=====Enqueued transaction: {}=====\r\n{}", initialize2_transaction.get_mint(), initialize2_transaction);
+                        }
                     }
                 }
             }

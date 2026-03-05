@@ -5,8 +5,11 @@ use solana_client::nonblocking::rpc_client::RpcClient;
 use solana_client::rpc_config::{CommitmentConfig, RpcTransactionConfig, UiTransactionEncoding};
 use solana_client::rpc_response::transaction::versioned::VersionedTransaction;
 use solana_sdk::signature::Signature;
+use crate::dex::dex::{MintTransaction, MintedTokenTransaction};
+use crate::dex::errors::MintTransactionError;
 
-pub struct RaydiumInitialize2Transaction {
+#[derive(Debug,Clone)]
+pub struct RaydiumMintedTransaction {
     token_program: Pubkey,
     spl_associated_token_account: Pubkey,
     system_program: Pubkey,
@@ -30,17 +33,9 @@ pub struct RaydiumInitialize2Transaction {
     user_lp_token_account: Pubkey,
 }
 
-#[derive(Debug)]
-pub enum RaydiumTransactionError {
-    NotEnoughKeys,
-    CantFindTokenAddress,
-    NoTransactionFound,
-    CouldNotParseTransaction,
-}
+impl MintedTokenTransaction for RaydiumMintedTransaction {
 
-impl RaydiumInitialize2Transaction {
-
-    pub async fn get_transaction(tx: Signature, rpc_endpoint: String) -> Result<RaydiumInitialize2Transaction, RaydiumTransactionError> {
+    async fn get_transaction(tx: Signature, rpc_endpoint: String) -> Result<MintTransaction, MintTransactionError> {
         let client =
             RpcClient::new_with_commitment(rpc_endpoint, CommitmentConfig::processed());
 
@@ -52,18 +47,18 @@ impl RaydiumInitialize2Transaction {
         let transaction = client
             .get_transaction_with_config(&tx, config)
             .await
-            .map_err(|_| RaydiumTransactionError::NoTransactionFound)?;
+            .map_err(|_| MintTransactionError::NoTransactionFound)?;
 
         if let Some(versioned_transaction) = transaction.transaction.transaction.decode() {
-            return RaydiumInitialize2Transaction::parse(&versioned_transaction)
+            return RaydiumMintedTransaction::parse(&versioned_transaction)
         }
 
-        Err(RaydiumTransactionError::CouldNotParseTransaction)
+        Err(MintTransactionError::CouldNotParseTransaction)
     }
-    pub fn parse(transaction: &VersionedTransaction) -> Result<Self, RaydiumTransactionError> {
+    fn parse(transaction: &VersionedTransaction) -> Result<MintTransaction, MintTransactionError> {
         let keys = transaction.message.static_account_keys();
         if keys.len() != 22 {
-            return Err(RaydiumTransactionError::NotEnoughKeys);
+            return Err(MintTransactionError::NotEnoughKeys);
         }
 
         // Use to debug the order of the keys inputted, if something seems off
@@ -82,10 +77,9 @@ impl RaydiumInitialize2Transaction {
             base_coin = pubkey!("So11111111111111111111111111111111111111112");
             token_coin = keys[13];
         } else {
-            return Err(RaydiumTransactionError::CantFindTokenAddress);
+            return Err(MintTransactionError::CantFindTokenAddress);
         }
-
-        Ok(RaydiumInitialize2Transaction {
+        let tx = RaydiumMintedTransaction {
             token_program: keys[12],
             spl_associated_token_account: keys[16],
             system_program: keys[11],
@@ -107,15 +101,50 @@ impl RaydiumInitialize2Transaction {
             user_token_coin: keys[1],
             user_token_pc: keys[9],
             user_lp_token_account: keys[10],
-        })
+        };
+        Ok(
+            MintTransaction::RAYDIUM(tx.clone())
+        )
     }
 
-    pub fn get_mint(&self) -> Pubkey {
+    fn get_dex(&self) -> &str {
+        "Raydium"
+    }
+
+    fn get_mint(&self) -> Pubkey {
         self.pc_mint
+    }
+
+    fn mock() -> Self {
+        let dummy_program = pubkey!("11111111111111111111111111111111");
+
+        Self {
+            token_program: dummy_program,
+            spl_associated_token_account: Pubkey::new_unique(),
+            system_program: dummy_program,
+            rent_program: dummy_program,
+            amm: Pubkey::new_unique(),
+            amm_authority: Pubkey::new_unique(),
+            amm_open_orders: Pubkey::new_unique(),
+            lp_mint: Pubkey::new_unique(),
+            coin_mint: pubkey!("So11111111111111111111111111111111111111112"), // Mocked as WSOL
+            pc_mint: Pubkey::new_unique(), // The "New" token
+            pool_coin_token_account: Pubkey::new_unique(),
+            pool_pc_token_account: Pubkey::new_unique(),
+            pool_withdraw_queue: Pubkey::new_unique(),
+            amm_target_orders: Pubkey::new_unique(),
+            pool_temp_lp: Pubkey::new_unique(),
+            serum_program: dummy_program,
+            serum_market: Pubkey::new_unique(),
+            user_wallet: Pubkey::new_unique(),
+            user_token_coin: Pubkey::new_unique(),
+            user_token_pc: Pubkey::new_unique(),
+            user_lp_token_account: Pubkey::new_unique(),
+        }
     }
 }
 
-impl fmt::Display for RaydiumInitialize2Transaction {
+impl fmt::Display for RaydiumMintedTransaction {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(
             f,

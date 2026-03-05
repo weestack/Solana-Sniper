@@ -4,8 +4,8 @@ use solana_client::rpc_config::CommitmentConfig;
 use std::sync::atomic::{AtomicUsize, Ordering};
 use std::sync::Arc;
 use tokio::task::JoinHandle;
+use utils::dex::dex::MintTransaction;
 use utils::env::env::Env;
-use utils::ring_buffer::ring_buffer;
 use utils::ring_buffer::ring_buffer::RingBuffer;
 
 #[tokio::main]
@@ -29,17 +29,14 @@ async fn main() {
 
     /* spawn sniper */
     for _ in 0..4 {
-        let rb: Arc<RingBuffer> = Arc::clone(&ring_buffer);
+        let rb: Arc<RingBuffer<MintTransaction>> = Arc::clone(&ring_buffer);
         let pc = Arc::clone(&processed_count);
         let sniper = tokio::spawn(async move {
-            let mut local_count = 0;
             loop {
                 if let Some(task) = rb.dequeue() {
-                    local_count += 1;
                     pc.fetch_add(1, Ordering::Relaxed);
-                    println!("Sniped coin: {:?}", task.mint);
+                    println!("Sniped coin: {:?}", task);
                 } else {
-                    println!("No tasks available, yielding to other tasks");
                     tokio::task::yield_now().await;
                 }
             }
@@ -69,4 +66,7 @@ async fn main() {
 
         subscriber.start_thread(producer_rb).await;
     });
+    for handle in workers {
+        handle.await.expect("Sniper thread failed");
+    }
 }

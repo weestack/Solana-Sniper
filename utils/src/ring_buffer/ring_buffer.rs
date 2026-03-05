@@ -1,27 +1,22 @@
 use std::sync::atomic::{AtomicUsize, Ordering};
+use crate::dex::dex::MintedTokenTransaction;
 
-#[derive(Debug)]
-pub struct MocketSwapTask {
-    pub mint: String,
-    pub dex: String,
-}
-
-pub struct Slot {
+pub struct Slot<T: MintedTokenTransaction> {
     sequence: AtomicUsize,
-    data: std::cell::UnsafeCell<Option<MocketSwapTask>>,
+    data: std::cell::UnsafeCell<Option<T>>,
 }
 
-unsafe impl Send for Slot {}
-unsafe impl Sync for Slot {}
+unsafe impl<T: MintedTokenTransaction + Send> Send for Slot<T> {}
+unsafe impl<T: MintedTokenTransaction + Sync> Sync for Slot<T> {}
 
-pub struct RingBuffer {
-    pub buffer: Vec<Slot>,
+pub struct RingBuffer<T: MintedTokenTransaction> {
+    pub buffer: Vec<Slot<T>>,
     mask: usize,
     enqueue_pos: AtomicUsize,
     dequeue_pos: AtomicUsize,
 }
 
-impl RingBuffer {
+impl<T: MintedTokenTransaction> RingBuffer<T> {
     pub fn new(size: usize) -> Self {
         assert!(size.is_power_of_two(), "Size must be a power of two");
 
@@ -41,7 +36,7 @@ impl RingBuffer {
         }
     }
 
-    pub fn enqueue(&self, data: MocketSwapTask) -> Result<(), MocketSwapTask> {
+    pub fn enqueue(&self, data: T) -> Result<(), T> {
         let mut pos = self.enqueue_pos.load(Ordering::Relaxed);
         loop {
             let slot = &self.buffer[pos & self.mask];
@@ -65,7 +60,7 @@ impl RingBuffer {
         }
     }
 
-    pub fn dequeue(&self) -> Option<MocketSwapTask> {
+    pub fn dequeue(&self) -> Option<T> {
         let mut pos = self.dequeue_pos.load(Ordering::Relaxed);
         loop {
             let slot = &self.buffer[pos & self.mask];

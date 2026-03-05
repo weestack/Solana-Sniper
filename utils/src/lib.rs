@@ -1,7 +1,10 @@
 pub mod env;
 pub mod raydium;
 pub mod ring_buffer;
-
+pub mod dex;
+mod solarflare;
+mod pumpfun;
+mod orca;
 
 pub fn lamports_to_sol(lamports: u64) -> f64 {
     let converted_lamports = lamports as f64;
@@ -12,7 +15,8 @@ pub fn lamports_to_sol(lamports: u64) -> f64 {
 mod tests {
     use std::str::FromStr;
     use solana_sdk::signature::Signature;
-    use crate::raydium::initialize2::RaydiumInitialize2Transaction;
+    use crate::dex::dex::MintedTokenTransaction;
+    use crate::raydium::mint::RaydiumMintedTransaction;
 
     #[tokio::test]
     async fn test_raydium_initialize2() {
@@ -21,9 +25,9 @@ mod tests {
         let initialize2_1 = Signature::from_str("fDJR6Bgm7Fm7uF4uJDwXmC99i8WvqKQ3hz6z64iXvjxWqzNsTWYDtEY6VcHzivkHvRZkZhdLEuLybMWQgvy3EJq").unwrap();
         /* https://solscan.io/tx/4UpnVxZJoSuTz1qefjBLX6Y1pS2krKY6xym9UrHEyqKiNXbDcxTGLoGDd6YxWqWH85K6PFwnpywgKN1tx97cabCb */
         let initialize2_2 = Signature::from_str("4UpnVxZJoSuTz1qefjBLX6Y1pS2krKY6xym9UrHEyqKiNXbDcxTGLoGDd6YxWqWH85K6PFwnpywgKN1tx97cabCb").unwrap();
-
-        let test1 = RaydiumInitialize2Transaction::get_transaction(initialize2_1, rpc_endpoint.to_string()).await;
-        let test2 = RaydiumInitialize2Transaction::get_transaction(initialize2_2, rpc_endpoint.to_string()).await;
+        
+        let test1 = RaydiumMintedTransaction::get_transaction(initialize2_1, rpc_endpoint.to_string()).await;
+        let test2 = RaydiumMintedTransaction::get_transaction(initialize2_2, rpc_endpoint.to_string()).await;
 
         assert!(test1.is_ok());
         assert!(test2.is_ok());
@@ -39,7 +43,7 @@ mod tests {
         let rpc_endpoint = "https://api.mainnet-beta.solana.com";
         let initialize2_random = Signature::new_unique();
 
-        let test_random = RaydiumInitialize2Transaction::get_transaction(initialize2_random, rpc_endpoint.to_string()).await;
+        let test_random = RaydiumMintedTransaction::get_transaction(initialize2_random, rpc_endpoint.to_string()).await;
         assert!(test_random.is_err());
     }
 }
